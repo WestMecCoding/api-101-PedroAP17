@@ -4,11 +4,66 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XHR and Graph</title>
+    <title>xhr and Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>    
+<body>  
+    <h1>Globol Average Temps 1880-2023</h1>  
+    <canvas id="myChart" width="400" height="200" ></canvas>
     hello from Index.html!
     <script>
+        window.addEventListener('load', fetchData);
+        function fetchData() {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', 'http://localhost:3000/csv-data', true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                let data = xhr.responseText;
+                let globolTemps = processData(data)
+                // console.log(data);
+                renderChart
+            } else {
+                console.log('something bad happened', xhr.statusText);
+            }
+        }
+        xhr.send();
+    } 
+    function processData(data){
+        const years = []
+        const temps = []
+        data = data.split('\n').slice(1);
+        rows.forEach(row => {
+            const cols = row.split(',');
+            years.push(cols[0]);
+            temps.push(14 + parseFloat(cols[1]));
+
+        });
+        return{years, temps};
+     }
+     function renderChart(data){
+        console.log('temps in renderChart', data)
+        const ctx = document.getElementById('myChart');
+
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+    datasets: [{
+      label: '# of Votes',
+      data: [12, 19, 3, 5, 2, 3],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+
+     }
     </script>
 </body>
 </html>
